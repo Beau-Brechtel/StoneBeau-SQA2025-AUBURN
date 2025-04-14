@@ -106,20 +106,21 @@ def checkIfValidK8SYaml(path2yaml):
 
 
 
-def getValsFromKey(dict_, target, list_holder  ):
+def getValsFromKey(dict_, target, list_holder):
     '''
     If you give a key, then this function gets the corresponding values 
     Multiple values are returned if there are keys with the same name  
     '''    
     if isinstance(dict_, dict):
-         for key, value in dict_.items():
-             if key == target:
-                 list_holder.append(value)
-             if isinstance(value, (dict, list)):
-                 getValsFromKey(value, target, list_holder)
-     elif isinstance(dict_, list):
-         for item in dict_:
-             getValsFromKey(item, target, list_holder)
+        for key, value in dict_.items():
+            if key == target:
+                list_holder.append(value)
+            if isinstance(value, (dict, list)):
+                getValsFromKey(value, target, list_holder)
+    elif isinstance(dict_, list):
+        for item in dict_:
+            getValsFromKey(item, target, list_holder)
+
 
 def checkIfValidHelm(path_script):
     val_ret = False 
