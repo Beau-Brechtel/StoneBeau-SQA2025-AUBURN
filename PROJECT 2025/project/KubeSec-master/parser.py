@@ -113,7 +113,7 @@ def getValsFromKey(dict_, target, list_holder):
     '''    
     if isinstance(dict_, dict):
         for key, value in dict_.items():
-            if key == target:
+            if key == target and value != {}:
                 list_holder.append(value)
             if isinstance(value, (dict, list)):
                 getValsFromKey(value, target, list_holder)
@@ -124,9 +124,11 @@ def getValsFromKey(dict_, target, list_holder):
 
 def checkIfValidHelm(path_script):
     val_ret = False 
-    path_script = path_script.lower()  # Make it case-insensitive
+    path_script = path_script.lower()
     if (
-        (constants.HELM_KW in path_script)
+        "values.yaml" in path_script
+        or "helmfile.yaml" in path_script
+        or (constants.HELM_KW in path_script)
         or (constants.CHART_KW in path_script)
         or (constants.SERVICE_KW in path_script)
         or (constants.INGRESS_KW in path_script)
@@ -135,6 +137,7 @@ def checkIfValidHelm(path_script):
     ) and ("yaml" in path_script or "yml" in path_script):
         val_ret = True
     return val_ret
+
 
 
 def readYAMLAsStr( path_script ):
