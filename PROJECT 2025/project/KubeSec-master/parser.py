@@ -37,19 +37,21 @@ def keyMiner(dic_, value):
   i.e. the whole hierarchy
   Returns None if no value is found  
   '''
-  if dic_ == value:
-    return [dic_]
-  elif isinstance(dic_, dict):
-    for k, v in dic_.items():
-      p = keyMiner(v, value)
-      if p:
-        return [k] + p
+  if isinstance(dic_, dict):
+        for k, v in dic_.items():
+            if v == value:  
+                return [k]
+            p = keyMiner(v, value)
+            if p:  
+                return [k] + p
   elif isinstance(dic_, list):
-    lst = dic_
-    for i in range(len(lst)):
-      p = keyMiner(lst[i], value)
-      if p:
-        return [str(i)] + p
+        for i in range(len(dic_)):
+            if dic_[i] == value:  
+                return [str(i)]
+            p = keyMiner(dic_[i], value)
+            if p:  
+                return [str(i)] + p
+  return None 
 
 
 
@@ -57,21 +59,16 @@ def getKeyRecursively(  dict_, list2hold,  depth_ = 0  ) :
     '''
     gives you ALL keys in a regular/nested dictionary 
     '''
-    if  isinstance(dict_, dict) :
-        # for key_, val_ in sorted(dict_.items(), key=lambda x: x[0]):    
-        for key_, val_ in sorted(dict_.items(), key = lambda x: x[0] if ( isinstance(x[0], str) ) else str(x[0])  ):    
+    if isinstance(dict_, dict):
+        for key_, val_ in sorted(dict_.items(), key=lambda x: x[0] if isinstance(x[0], str) else str(x[0])):
+            # Always append the key, even if the value is an empty list or dictionary
+            list2hold.append((key_, depth_))
             if isinstance(val_, dict):
-                list2hold.append( (key_, depth_) )
-                depth_ += 1 
-                getKeyRecursively( val_, list2hold,  depth_ ) 
+                getKeyRecursively(val_, list2hold, depth_ + 1)
             elif isinstance(val_, list):
                 for listItem in val_:
-                        if( isinstance( listItem, dict ) ):
-                            list2hold.append( (key_, depth_) )
-                            depth_ += 1 
-                            getKeyRecursively( listItem, list2hold,  depth_ )     
-            else: 
-                list2hold.append( (key_, depth_) ) 
+                    if isinstance(listItem, dict):
+                        getKeyRecursively(listItem, list2hold, depth_ + 1)
     #print(list2hold)               
 
 def getValuesRecursively(  dict_   ) :
