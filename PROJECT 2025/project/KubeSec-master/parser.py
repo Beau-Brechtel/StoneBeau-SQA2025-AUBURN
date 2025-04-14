@@ -40,7 +40,7 @@ def keyMiner(dic_, value):
   i.e. the whole hierarchy
   Returns None if no value is found  
   '''
-  logging.info(f"keyMiner called with value={value}")  # forensics logging
+ logging.info(f"keyMiner called with value={value}")  # forensics logging
     if isinstance(dic_, dict):
         for k, v in dic_.items():
             if v == value:
@@ -58,8 +58,6 @@ def keyMiner(dic_, value):
             if p:
                 return [str(i)] + p
     return None
-
-
 
 def getKeyRecursively(  dict_, list2hold,  depth_ = 0  ) :
     '''
