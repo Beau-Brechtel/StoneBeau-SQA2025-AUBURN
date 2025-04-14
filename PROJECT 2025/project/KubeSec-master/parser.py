@@ -111,23 +111,30 @@ def getValsFromKey(dict_, target, list_holder  ):
     If you give a key, then this function gets the corresponding values 
     Multiple values are returned if there are keys with the same name  
     '''    
-    if ( isinstance( dict_, dict ) ):
-        for key, value in dict_.items():
-            # print( key, len(key) , target, len( target ), value  )
-            if key == target:
-                list_holder.append( value )
-            else: 
-                if isinstance(value, dict):
-                    getValsFromKey(value, target, list_holder)
-                elif isinstance(value, list):
-                    for ls in value:
-                        getValsFromKey(ls, target, list_holder)
+    if isinstance(dict_, dict):
+         for key, value in dict_.items():
+             if key == target:
+                 list_holder.append(value)
+             if isinstance(value, (dict, list)):
+                 getValsFromKey(value, target, list_holder)
+     elif isinstance(dict_, list):
+         for item in dict_:
+             getValsFromKey(item, target, list_holder)
 
 def checkIfValidHelm(path_script):
     val_ret = False 
-    if ( (constants.HELM_KW in path_script) or (constants.CHART_KW in path_script) or (constants.SERVICE_KW in path_script) or (constants.INGRESS_KW in path_script)  or(constants.HELM_DEPLOY_KW in path_script) or (constants.CONFIG_KW in path_script) )  and (constants.VALUE_KW in path_script) :
-        val_ret = True 
+    path_script = path_script.lower()  # Make it case-insensitive
+    if (
+        (constants.HELM_KW in path_script)
+        or (constants.CHART_KW in path_script)
+        or (constants.SERVICE_KW in path_script)
+        or (constants.INGRESS_KW in path_script)
+        or (constants.HELM_DEPLOY_KW in path_script)
+        or (constants.CONFIG_KW in path_script)
+    ) and ("yaml" in path_script or "yml" in path_script):
+        val_ret = True
     return val_ret
+
 
 def readYAMLAsStr( path_script ):
     yaml_as_str = constants.YAML_SKIPPING_TEXT
