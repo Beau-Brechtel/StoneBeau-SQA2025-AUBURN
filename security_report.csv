@@ -1,5 +1,1 @@
 Filename,Issue,Severity,Confidence,Line Number,Description
-./test.py,blacklist,B403,LOW,HIGH,https://cwe.mitre.org/data/definitions/502.html,Consider possible security implications associated with pickle module.,2,0,13,[2],https://bandit.readthedocs.io/en/1.8.2/blacklists/blacklist_imports.html#b403-import-pickle
-./test.py,blacklist,B301,MEDIUM,HIGH,https://cwe.mitre.org/data/definitions/502.html,"Pickle and modules that wrap it can be unsafe when used to deserialize untrusted data, possible security issue.",7,11,41,[7],https://bandit.readthedocs.io/en/1.8.2/blacklists/blacklist_calls.html#b301-pickle
-./test.py,start_process_with_a_shell,B605,LOW,HIGH,https://cwe.mitre.org/data/definitions/78.html,"Starting a process with a shell: Seems safe, but may be changed in the future, consider rewriting without shell",12,4,25,[12],https://bandit.readthedocs.io/en/1.8.2/plugins/b605_start_process_with_a_shell.html
-./test.py,start_process_with_partial_path,B607,LOW,HIGH,https://cwe.mitre.org/data/definitions/78.html,Starting a process with a partial executable path,12,4,25,[12],https://bandit.readthedocs.io/en/1.8.2/plugins/b607_start_process_with_partial_path.html
