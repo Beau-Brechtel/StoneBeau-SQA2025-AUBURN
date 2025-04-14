@@ -181,6 +181,37 @@ def fuzz_getValsFromKey():
 
         # Test 10: None as value, but key still matches
         {"data": {"a": None, "b": {"a": "value"}}, "target": "a", "expected": [None, "value"]},
+
+                # Test 11: Target key overlaps with non-string keys
+        {"data": {1: {"a": 10}, "a": 5}, "target": "a", "expected": [5, 10]},  # Order may vary
+
+        # Test 12: List of dicts with missing target key in some items
+        {"data": [{"name": "a"}, {"title": "b"}, {"name": "c"}], "target": "name", "expected": ["a", "c"]},
+
+        # Test 13: Deeply nested target that appears multiple times
+        {"data": {"a": {"b": {"target": 1}}, "x": {"target": 2}}, "target": "target", "expected": [1, 2]},
+
+        # Test 14: Empty dictionaries where the target key could be
+        {"data": {"a": {}, "b": {"c": {}}}, "target": "c", "expected": []},
+
+        # Test 15: Key exists at root and in multiple branches
+        {"data": {"x": 1, "nested": {"x": 2}, "more": {"deep": {"x": 3}}}, "target": "x", "expected": [1, 2, 3]},
+
+        # Test 16: Multiple data types as values (int, list, dict, None)
+        {"data": {"a": 1, "b": [2, 3], "c": {"a": {"z": 5}}, "d": None}, "target": "a", "expected": [1, {"z": 5}]},
+
+        # Test 17: Target key as int
+        {"data": {5: "five", 6: "six"}, "target": 5, "expected": ["five"]},  # Depends on key handling
+
+        # Test 18: Target key with special characters
+        {"data": {"weird$key": 99, "inner": {"weird$key": 100}}, "target": "weird$key", "expected": [99, 100]},
+
+        # Test 19: Same key but different cases (case sensitivity test)
+        {"data": {"Key": "Upper", "key": "Lower"}, "target": "key", "expected": ["Lower"]},
+
+        # Test 20: Target key buried in a list that contains a dict with nested dict
+        {"data": [{"a": {"b": {"c": 123}}}], "target": "c", "expected": [123]},
+
     ]
     for i, case in enumerate(test_cases):
         print(f"[getValsFromKey] Test Case {i + 1}")
