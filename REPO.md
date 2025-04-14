@@ -19,3 +19,9 @@ After fuzzing the getValsFromKey function we found bugs: tt failed to detect key
 After fuzzing the checkIfValidHelm function we found it did not detect common Helm-related files such as "values.yaml" and "helmfile.yaml".
     Updated: added case-insensitive matching and explicitly checked for known filenames
 
+Logging was added to five methods to support forensic tracking and debugging. This helps with:
+- Understanding function entry points.
+- Identifying when matches or yields occur.
+- Supporting future debugging and analysis of YAML parsing behavior.
+
+
