@@ -239,23 +239,30 @@ def fuzz_checkIfValidHelm():
 
 
 # Call the fuzzing functions
-print("KeyMiner Fuzzing\n")
 #fuzz_keyMiner()
+print("KeyMiner Fuzzing\n")
+fuzz_keyMiner()
 print("\n---------------------------------------------------------------\n")
 print("-----------------------------------------------------------------\n")
-print("GetKeyRecursively Fuzzing\n")
+
 #fuzz_getKeyRecursively()
+print("GetKeyRecursively Fuzzing\n")
+fuzz_getKeyRecursively()
 print("\n---------------------------------------------------------------\n")
 print("-----------------------------------------------------------------\n")
+
+#fuzz_getValuesRecursivly()
 print("GetValuesRecursively Fuzzing\n")
 fuzz_getValuesRecursively()
 print("\n---------------------------------------------------------------\n")
 print("-----------------------------------------------------------------\n")
+
 #fuzz_getValsFromKey()
 print("GetValsFromKey Fuzzing\n")
 fuzz_getValsFromKey()
 print("\n---------------------------------------------------------------\n")
 print("-----------------------------------------------------------------\n")
+
 #fuzz_checkIfValidHelm()
 print("CheckIfValidHelm Fuzzing\n")
 fuzz_checkIfValidHelm()
