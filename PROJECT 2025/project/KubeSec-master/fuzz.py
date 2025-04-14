@@ -1,7 +1,8 @@
 from parser import keyMiner
 from parser import getKeyRecursively
 from parser import getValuesRecursively
-
+from parser import getValsFromKey
+from parser import checkIfValidHelm
 
 def fuzz_keyMiner():
     test_cases = [
@@ -149,6 +150,93 @@ def fuzz_getValuesRecursively():
             print(f"Error: {e}\n")
         print("-" * 50)
 
+def fuzz_getValsFromKey():
+    test_cases = [
+        # Test 1: Simple top-level key match
+        {"data": {"a": 1, "b": 2}, "target": "a", "expected": [1]},
+
+        # Test 2: Deeply nested target key
+        {"data": {"a": {"b": {"c": 3}}}, "target": "c", "expected": [3]},
+
+        # Test 3: Target key appears multiple times in a list
+        {"data": {"a": [{"b": 1}, {"b": 2}]}, "target": "b", "expected": [1, 2]},
+
+        # Test 4: Target key inside a list within a dictionary
+        {"data": {"x": {"y": [1, {"z": 42}]}}, "target": "z", "expected": [42]},
+
+        # Test 5: Very deep nested key path
+        {"data": {"a": {"b": {"c": {"d": {"e": 5}}}}}, "target": "e", "expected": [5]},
+
+        # Test 6: No match found
+        {"data": {}, "target": "foo", "expected": []},
+
+        # Test 7: Same key appears at two levels
+        {"data": {"a": 1, "b": 2, "c": {"a": 3}}, "target": "a", "expected": [1, 3]},
+
+        # Test 8: Repeated target keys in a list of dictionaries
+        {"data": {"list": [{"target": 1}, {"target": 2}, {"target": 3}]}, "target": "target", "expected": [1, 2, 3]},
+
+        # Test 9: Target key deeply nested
+        {"data": {"outer": {"inner": {"deep": {"target": 9}}}}, "target": "target", "expected": [9]},
+
+        # Test 10: None as value, but key still matches
+        {"data": {"a": None, "b": {"a": "value"}}, "target": "a", "expected": [None, "value"]},
+    ]
+    for i, case in enumerate(test_cases):
+        print(f"[getValsFromKey] Test Case {i + 1}")
+        try:
+            result_holder = []
+            getValsFromKey(case["data"], case["target"], result_holder)
+            print("Result:", result_holder)
+            assert result_holder == case["expected"], f"Failed: Expected {case['expected']}, got {result_holder}"
+            print("Test Passed\n")
+        except Exception as e:
+            print(f"Error: {e}\n")
+        print("-" * 50)
+
+def fuzz_checkIfValidHelm():
+    test_cases = [
+        # Test 1: Common Helm file name
+        {"input": "values.yaml", "expected": True},
+
+        # Test 2: Template file used in Helm charts
+        {"input": "templates/deployment.yaml", "expected": True},
+
+        # Test 3: Service file under a chart folder
+        {"input": "charts/service.yaml", "expected": True},
+
+        # Test 4: Unrelated file name
+        {"input": "somefolder/nonsensicalfile.txt", "expected": False},
+
+        # Test 5: Configuration file inside chart
+        {"input": "charts/mychart/config.yaml", "expected": True},
+
+        # Test 6: Helm-specific filename
+        {"input": "helmfile.yaml", "expected": True},
+
+        # Test 7: YAML file not related to Helm
+        {"input": "config-notrelated.yml", "expected": False},
+
+        # Test 8: Helm values file with long name
+        {"input": "deployments/helm-service-values.yaml", "expected": True},
+
+        # Test 9: Service and ingress in name
+        {"input": "manifests/service-ingress-chart.yaml", "expected": True},
+
+        # Test 10: Simple unrelated YAML
+        {"input": "foo/bar.yaml", "expected": False},
+    ]
+    for i, case in enumerate(test_cases):
+        print(f"[checkIfValidHelm] Test Case {i + 1}")
+        try:
+            result = checkIfValidHelm(case["input"])
+            print("Result:", result)
+            assert result == case["expected"], f"Failed: Expected {case['expected']}, got {result}"
+            print("Test Passed\n")
+        except Exception as e:
+            print(f"Error: {e}\n")
+        print("-" * 50)
+
 
 # Call the fuzzing functions
 print("KeyMiner Fuzzing\n")
@@ -161,5 +249,15 @@ print("\n---------------------------------------------------------------\n")
 print("-----------------------------------------------------------------\n")
 print("GetValuesRecursively Fuzzing\n")
 fuzz_getValuesRecursively()
+print("\n---------------------------------------------------------------\n")
+print("-----------------------------------------------------------------\n")
+#fuzz_getValsFromKey()
+print("GetValsFromKey Fuzzing\n")
+fuzz_getValsFromKey()
+print("\n---------------------------------------------------------------\n")
+print("-----------------------------------------------------------------\n")
+#fuzz_checkIfValidHelm()
+print("CheckIfValidHelm Fuzzing\n")
+fuzz_checkIfValidHelm()
 print("\n---------------------------------------------------------------\n")
 print("-----------------------------------------------------------------\n")
