@@ -14,12 +14,15 @@ import pathlib as pl
 import re
 import subprocess
 import os
+import logging
 
 #update basepath
 base_path = r" "
 
 key_jsonpath_mapping = {}
 
+#Sets up Forensic Logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s') 
     
 def checkIfWeirdYAML(yaml_script):
     '''
@@ -37,21 +40,24 @@ def keyMiner(dic_, value):
   i.e. the whole hierarchy
   Returns None if no value is found  
   '''
-  if isinstance(dic_, dict):
+  logging.info(f"keyMiner called with value={value}")  # forensics logging
+    if isinstance(dic_, dict):
         for k, v in dic_.items():
-            if v == value:  
+            if v == value:
+                logging.info(f"Match found at key: {k}")  # forensics logging
                 return [k]
             p = keyMiner(v, value)
-            if p:  
+            if p:
                 return [k] + p
-  elif isinstance(dic_, list):
+    elif isinstance(dic_, list):
         for i in range(len(dic_)):
-            if dic_[i] == value:  
+            if dic_[i] == value:
+                logging.info(f"Match found at index: {i}")  # forensics logging
                 return [str(i)]
             p = keyMiner(dic_[i], value)
-            if p:  
+            if p:
                 return [str(i)] + p
-  return None 
+    return None
 
 
 
@@ -59,9 +65,9 @@ def getKeyRecursively(  dict_, list2hold,  depth_ = 0  ) :
     '''
     gives you ALL keys in a regular/nested dictionary 
     '''
+   logging.info("getKeyRecursively called")  # forensics logging
     if isinstance(dict_, dict):
         for key_, val_ in sorted(dict_.items(), key=lambda x: x[0] if isinstance(x[0], str) else str(x[0])):
-            # Always append the key, even if the value is an empty list or dictionary
             list2hold.append((key_, depth_))
             if isinstance(val_, dict):
                 getKeyRecursively(val_, list2hold, depth_ + 1)
@@ -75,16 +81,16 @@ def getValuesRecursively(  dict_   ) :
     '''
     gives you ALL values in a regular/nested dictionary 
     '''
-    if  isinstance(dict_, dict) :
+   logging.info("getValuesRecursively called")  # forensics logging
+    if isinstance(dict_, dict):
         for val_ in dict_.values():
-            yield from getValuesRecursively(val_) 
-            #print(val_)
+            yield from getValuesRecursively(val_)
     elif isinstance(dict_, list):
         for v_ in dict_:
             yield from getValuesRecursively(v_)
-            #print(v_)
-    else: 
-        yield dict_ 
+    else:
+        logging.info(f"Value yielded: {dict_}")  # forensics logging
+        yield dict_
 
 
 def checkIfValidK8SYaml(path2yaml):
@@ -111,9 +117,11 @@ def getValsFromKey(dict_, target, list_holder):
     If you give a key, then this function gets the corresponding values 
     Multiple values are returned if there are keys with the same name  
     '''    
+    logging.info(f"getValsFromKey called with target={target}")  # forensics logging
     if isinstance(dict_, dict):
         for key, value in dict_.items():
             if key == target and value != {}:
+                logging.info(f"Value matched for key '{key}': {value}")  # forensics logging
                 list_holder.append(value)
             if isinstance(value, (dict, list)):
                 getValsFromKey(value, target, list_holder)
@@ -123,7 +131,8 @@ def getValsFromKey(dict_, target, list_holder):
 
 
 def checkIfValidHelm(path_script):
-    val_ret = False 
+    logging.info(f"checkIfValidHelm called with path: {path_script}")  # forensics logging
+    val_ret = False
     path_script = path_script.lower()
     if (
         "values.yaml" in path_script
@@ -136,6 +145,9 @@ def checkIfValidHelm(path_script):
         or (constants.CONFIG_KW in path_script)
     ) and ("yaml" in path_script or "yml" in path_script):
         val_ret = True
+        logging.info("Helm-related file detected.")  # forensics logging
+    else:
+        logging.info("File not identified as Helm-related.")  # forensics logging
     return val_ret
 
 
