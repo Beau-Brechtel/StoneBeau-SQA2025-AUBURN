@@ -4,7 +4,7 @@ Semester Project for Software Quality Assurance 2025
 Team Name: StoneBeau
 
 Team Members:
-Beau Brechtel:
+Beau Brechtel
   - GitHook
   - Automatic fuzzing by github
   - 3 Fuzzing methods
